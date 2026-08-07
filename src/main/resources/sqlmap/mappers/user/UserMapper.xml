@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="yeolmok.rest.domain.user.mapper.UserMapper">
+
+    <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (email, password, name)
+        VALUES (#{email}, #{password}, #{name})
+    </insert>
+
+    <select id="selectById" resultType="User">
+        SELECT id, email, password, name, status, withdrawn_at
+        FROM users
+        WHERE id = #{id}
+          AND status = 'ACTIVE'
+    </select>
+
+    <select id="selectByEmail" resultType="User">
+        SELECT id, email, password, name, status, withdrawn_at
+        FROM users
+        WHERE email = #{email}
+          AND status = 'ACTIVE'
+    </select>
+
+    <select id="existsByEmail" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <update id="updateName" parameterType="User">
+        UPDATE users
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <update id="withdraw" parameterType="User">
+        UPDATE users
+        SET email = #{email},
+            name = #{name},
+            status = #{status},
+            withdrawn_at = #{withdrawnAt}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM users
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

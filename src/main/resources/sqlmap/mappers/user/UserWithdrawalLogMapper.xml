@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="yeolmok.rest.domain.user.mapper.UserWithdrawalLogMapper">
+
+    <insert id="insert" parameterType="UserWithdrawalLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_withdrawal_logs (user_id, email, name, reason, withdrawn_at)
+        VALUES (#{userId}, #{email}, #{name}, #{reason}, #{withdrawnAt})
+    </insert>
+
+</mapper>
