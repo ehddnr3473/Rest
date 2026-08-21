@@ -2,8 +2,6 @@ package yeolmok.rest.common.exception;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,7 +11,6 @@ import yeolmok.rest.common.response.ApiResponse;
 import yeolmok.rest.common.response.CommonResponseCode;
 import yeolmok.rest.common.response.ValidationError;
 
-@Order(Ordered.LOWEST_PRECEDENCE)
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
