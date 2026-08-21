@@ -18,12 +18,18 @@ import yeolmok.rest.common.response.ValidationError;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException e) {
         List<ValidationError> errors = e.getBindingResult().getFieldErrors().stream()
                 .map(error -> new ValidationError(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.validationError(CommonResponseCode.VALIDATION_ERROR, errors));
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException e) {
+        return ResponseEntity.status(e.getErrorCode().getStatus())
+                .body(ApiResponse.error(e.getErrorCode(), e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

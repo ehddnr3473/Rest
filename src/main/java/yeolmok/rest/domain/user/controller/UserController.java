@@ -2,6 +2,7 @@ package yeolmok.rest.domain.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,10 @@ public class UserController {
     private final UserService userService;
 
     @Operation(summary = "회원가입", description = "이메일/비밀번호/이름으로 회원가입합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "VALIDATION_ERROR"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "DUPLICATE_EMAIL")
+    })
     @PostMapping
     public ResponseEntity<ApiResponse<UserResponseDto>> signUp(@Valid @RequestBody UserSignUpRequestDto request) {
         UserResponseDto response = userService.signUp(request);
@@ -31,6 +36,9 @@ public class UserController {
     }
 
     @Operation(summary = "회원 조회", description = "id로 회원 정보를 조회합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "USER_NOT_FOUND")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponseDto>> getUser(
             @Parameter(description = "회원 id", example = "1") @PathVariable Long id) {
@@ -38,6 +46,10 @@ public class UserController {
     }
 
     @Operation(summary = "회원 정보 수정", description = "이름을 수정합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "VALIDATION_ERROR"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "USER_NOT_FOUND")
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponseDto>> updateUser(
             @Parameter(description = "회원 id", example = "1") @PathVariable Long id,
@@ -46,6 +58,9 @@ public class UserController {
     }
 
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴 처리합니다. 개인정보는 익명화되고 탈퇴 이력이 별도로 남습니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "USER_NOT_FOUND")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> withdraw(
             @Parameter(description = "회원 id", example = "1") @PathVariable Long id,

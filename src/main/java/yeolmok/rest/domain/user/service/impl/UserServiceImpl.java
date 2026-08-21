@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import yeolmok.rest.common.exception.BusinessException;
 import yeolmok.rest.domain.user.dto.request.UserSignUpRequestDto;
 import yeolmok.rest.domain.user.dto.request.UserUpdateRequestDto;
 import yeolmok.rest.domain.user.dto.request.UserWithdrawRequestDto;
@@ -11,8 +12,7 @@ import yeolmok.rest.domain.user.dto.response.UserResponseDto;
 import yeolmok.rest.domain.user.entity.User;
 import yeolmok.rest.domain.user.entity.UserStatus;
 import yeolmok.rest.domain.user.entity.UserWithdrawalLog;
-import yeolmok.rest.domain.user.exception.DuplicateEmailException;
-import yeolmok.rest.domain.user.exception.UserNotFoundException;
+import yeolmok.rest.domain.user.exception.UserErrorCode;
 import yeolmok.rest.domain.user.mapper.UserMapper;
 import yeolmok.rest.domain.user.mapper.UserWithdrawalLogMapper;
 import yeolmok.rest.domain.user.service.UserService;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto signUp(UserSignUpRequestDto request) {
         if (userMapper.existsByEmail(request.getEmail()) > 0) {
-            throw new DuplicateEmailException(request.getEmail());
+            throw new BusinessException(UserErrorCode.DUPLICATE_EMAIL, request.getEmail());
         }
 
         User user = request.toEntity();
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto getUser(Long id) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw new UserNotFoundException(id);
+            throw new BusinessException(UserErrorCode.USER_NOT_FOUND, String.valueOf(id));
         }
         return UserResponseDto.from(user);
     }
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateUser(Long id, UserUpdateRequestDto request) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw new UserNotFoundException(id);
+            throw new BusinessException(UserErrorCode.USER_NOT_FOUND, String.valueOf(id));
         }
 
         user.setName(request.getName());
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     public void withdraw(Long id, UserWithdrawRequestDto request) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw new UserNotFoundException(id);
+            throw new BusinessException(UserErrorCode.USER_NOT_FOUND, String.valueOf(id));
         }
 
         userWithdrawalLogMapper.insert(UserWithdrawalLog.of(user, request.getReason()));
